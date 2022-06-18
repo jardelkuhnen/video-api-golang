@@ -7,5 +7,15 @@
 [GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
 Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies for details.
 [GIN-debug] Listening and serving HTTP on :8080
+[GIN-debug] redirecting request 307: /v1/videos/ --> /v1/videos/
+::1 - [18 Jun 22 11:46 -03] POST /v1/videos/ 400 249.672µs 
+[GIN-debug] redirecting request 307: /v1/videos/ --> /v1/videos/
+::1 - [18 Jun 22 11:49 -03] POST /v1/videos/ 200 98.532µs 
 [GIN-debug] redirecting request 301: /v1/videos/ --> /v1/videos/
-::1 - [18 Jun 22 11:12 -03] GET /v1/videos/ 200 77.936µs 
+::1 - [18 Jun 22 11:49 -03] GET /v1/videos/ 200 38.194µs 
+[GIN-debug] redirecting request 307: /v1/videos/ --> /v1/videos/
+::1 - [18 Jun 22 11:49 -03] POST /v1/videos/ 400 68.396µs 
+[GIN-debug] redirecting request 307: /v1/videos/ --> /v1/videos/
+::1 - [18 Jun 22 11:50 -03] POST /v1/videos/ 400 54.233µs 
+[GIN-debug] redirecting request 307: /v1/videos/ --> /v1/videos/
+::1 - [18 Jun 22 11:50 -03] POST /v1/videos/ 400 599.131µs 

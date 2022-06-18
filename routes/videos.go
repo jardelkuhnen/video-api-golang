@@ -21,7 +21,13 @@ func addVideosRoutes(routerGroup *gin.RouterGroup) {
 	})
 
 	videos.POST("/", func(ctx *gin.Context) {
-		ctx.JSON(200, videoController.Save(ctx))
+		err := videoController.Save(ctx)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		} else {
+			ctx.JSON(http.StatusOK, gin.H{"message": "Video inserted with success!"})
+		}
+
 	})
 
 	videos.DELETE("/", func(ctx *gin.Context) {
