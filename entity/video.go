@@ -9,7 +9,7 @@ type Person struct {
 
 type Video struct {
 	Id          string `json:"id"`
-	Title       string `json:"title" binding:"min=2,max=10"`
+	Title       string `json:"title" binding:"min=2,max=10" validate:"is-bad-language"`
 	Description string `json:"description" binding:"max=100"`
 	URL         string `json:"url" binding:"required,url"`
 	Author      Person `json:"author" binding:"required"`
