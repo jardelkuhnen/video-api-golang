@@ -2,6 +2,7 @@ package routes
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jardelkuhnen/video-api/controller"
@@ -39,6 +40,11 @@ func addVideosRoutes(routerGroup *gin.RouterGroup) {
 			return
 		}
 
-		ctx.JSON(200, videoController.Delete(id))
+		idInt, err := strconv.ParseUint(id, 10, 64)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		}
+
+		ctx.JSON(200, videoController.Delete(idInt))
 	})
 }

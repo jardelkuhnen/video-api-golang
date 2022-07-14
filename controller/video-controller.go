@@ -11,7 +11,7 @@ import (
 type VideoController interface {
 	FindAll() []entity.Video
 	Save(ctx *gin.Context) error
-	Delete(id string) string
+	Delete(id uint64) string
 }
 
 type controller struct {
@@ -47,7 +47,7 @@ func (c *controller) Save(ctx *gin.Context) error {
 	return nil
 }
 
-func (c *controller) Delete(id string) string {
+func (c *controller) Delete(id uint64) string {
 	c.service.Delete(id)
 	return "Removed with success!"
 }

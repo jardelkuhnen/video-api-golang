@@ -3,14 +3,13 @@ package service
 import (
 	"fmt"
 
-	"github.com/google/uuid"
 	"github.com/jardelkuhnen/video-api/entity"
 )
 
 type VideoService interface {
 	Save(entity.Video) entity.Video
 	FindAll() []entity.Video
-	Delete(videoId string)
+	Delete(videoId uint64)
 }
 
 type videoService struct {
@@ -22,8 +21,6 @@ func New() VideoService {
 }
 
 func (service *videoService) Save(video entity.Video) entity.Video {
-	id := uuid.New()
-	video.Id = id.String()
 	service.videos = append(service.videos, video)
 	return video
 }
@@ -31,10 +28,10 @@ func (service *videoService) FindAll() []entity.Video {
 	return service.videos
 
 }
-func (service *videoService) Delete(videoId string) {
+func (service *videoService) Delete(videoId uint64) {
 	fmt.Println("Id para remoçao ", videoId)
 	for i := 0; i < len(service.videos); i++ {
-		if service.videos[i].Id == videoId {
+		if service.videos[i].ID == videoId {
 			service.videos = removeElementByIndex(service.videos, i)
 		}
 	}
