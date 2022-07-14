@@ -6,11 +6,13 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jardelkuhnen/video-api/controller"
+	"github.com/jardelkuhnen/video-api/repository"
 	"github.com/jardelkuhnen/video-api/service"
 )
 
 var (
-	videoService    service.VideoService       = service.New()
+	videoRepository repository.VideoRepository = repository.NewVideoRepository()
+	videoService    service.VideoService       = service.New(videoRepository)
 	videoController controller.VideoController = controller.New(videoService)
 )
 

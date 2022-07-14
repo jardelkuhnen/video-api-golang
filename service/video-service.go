@@ -1,44 +1,48 @@
 package service
 
 import (
-	"fmt"
-
 	"github.com/jardelkuhnen/video-api/entity"
+	"github.com/jardelkuhnen/video-api/repository"
 )
 
 type VideoService interface {
 	Save(entity.Video) entity.Video
+	Update(video entity.Video)
 	FindAll() []entity.Video
+	FindById(id uint64) entity.Video
 	Delete(videoId uint64)
 }
 
 type videoService struct {
-	videos []entity.Video
+	// videos []entity.Video
+	videoRepository repository.VideoRepository
 }
 
-func New() VideoService {
-	return &videoService{}
+func New(repo repository.VideoRepository) VideoService {
+	return &videoService{
+		videoRepository: repo,
+	}
+}
+
+// FindById implements VideoService
+func (db *videoService) FindById(id uint64) entity.Video {
+	return db.videoRepository.FindById(id)
 }
 
 func (service *videoService) Save(video entity.Video) entity.Video {
-	service.videos = append(service.videos, video)
+	service.videoRepository.Save(video)
 	return video
 }
+
 func (service *videoService) FindAll() []entity.Video {
-	return service.videos
+	return service.videoRepository.FindAll()
 
 }
+
+func (service *videoService) Update(video entity.Video) {
+	service.videoRepository.Update(video)
+}
+
 func (service *videoService) Delete(videoId uint64) {
-	fmt.Println("Id para remoçao ", videoId)
-	for i := 0; i < len(service.videos); i++ {
-		if service.videos[i].ID == videoId {
-			service.videos = removeElementByIndex(service.videos, i)
-		}
-	}
-
-	fmt.Println(service.videos)
-}
-
-func removeElementByIndex[T any](slice []T, index int) []T {
-	return append(slice[:index], slice[index+1:]...)
+	service.videoRepository.Delete(service.FindById(videoId))
 }
