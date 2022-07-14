@@ -21,7 +21,18 @@ func Run() {
 	configureDebugMode()
 
 	getRoutes()
-	router.Run(":8080")
+	port := getPortConfig()
+	router.Run(":" + port)
+}
+
+func getPortConfig() string {
+	port := os.Getenv("PORT")
+
+	if port == "" {
+		return "8080"
+	}
+
+	return port
 }
 
 func configureDebugMode() {
