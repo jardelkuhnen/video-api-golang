@@ -15,7 +15,7 @@ Features:
  - Save logs into file
  - External definition of routes
  - Gindump for debug mode 
- - Crud with sqlite3
+ - Crud with sqlite3 and Gorm
 
 ## Install
 
