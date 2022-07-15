@@ -45,11 +45,11 @@ func configureDebugMode() {
 }
 
 func getRoutes() {
-	v1 := router.Group("/v1")
+	v1 := router.Group("/api/v1")
 	addPingRoutes(v1)
 	addVideosRoutes(v1)
 	addPingAuthorizedRoutes(v1)
 
-	v2 := router.Group("/v2")
+	v2 := router.Group("/api/v2")
 	addPingRoutes(v2)
 }
