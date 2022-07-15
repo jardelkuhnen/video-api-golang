@@ -11,7 +11,9 @@ import (
 type VideoController interface {
 	FindAll() []entity.Video
 	Save(ctx *gin.Context) error
-	Delete(id uint64) string
+	Update(ctx *gin.Context) error
+	FindById(id uint64) (entity.Video, error)
+	Delete(id uint64) (string, error)
 }
 
 type controller struct {
@@ -26,6 +28,25 @@ func New(service service.VideoService) VideoController {
 	return &controller{
 		service: service,
 	}
+}
+
+func (c *controller) FindById(id uint64) (entity.Video, error) {
+	return c.service.FindById(id)
+}
+
+func (c *controller) Update(ctx *gin.Context) error {
+	var video entity.Video
+	err := ctx.ShouldBindJSON(&video)
+	if err != nil {
+		return err
+	}
+	err = validate.Struct(video)
+	if err != nil {
+		return err
+	}
+
+	c.service.Update(video)
+	return nil
 }
 
 func (c *controller) FindAll() []entity.Video {
@@ -47,7 +68,10 @@ func (c *controller) Save(ctx *gin.Context) error {
 	return nil
 }
 
-func (c *controller) Delete(id uint64) string {
-	c.service.Delete(id)
-	return "Removed with success!"
+func (c *controller) Delete(id uint64) (string, error) {
+	err := c.service.Delete(id)
+	if err != nil {
+		return "", err
+	}
+	return "Removed with success!", nil
 }

@@ -13,7 +13,7 @@ type VideoRepository interface {
 	Update(video entity.Video)
 	Delete(video entity.Video)
 	FindAll() []entity.Video
-	FindById(id uint64) entity.Video
+	FindById(id uint64) (entity.Video, error)
 	CloseDB()
 }
 
@@ -34,13 +34,14 @@ func NewVideoRepository() VideoRepository {
 }
 
 // FindById implements VideoRepository
-func (db *database) FindById(id uint64) entity.Video {
-	var video entity.Video
-	if err := db.connection.First(&video, id); err != nil {
-		panic("Could not find a resource")
+func (db *database) FindById(id uint64) (entity.Video, error) {
+	var video = entity.Video{ID: id}
+	result := db.connection.First(&video, id)
+	if result.Error != nil {
+		return entity.Video{}, result.Error
 	}
 
-	return video
+	return video, nil
 }
 
 // CloseDB implements VideoRepository
