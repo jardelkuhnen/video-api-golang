@@ -9,34 +9,31 @@ import (
 	"github.com/jardelkuhnen/video-api/entity"
 	"github.com/jardelkuhnen/video-api/repository"
 	"github.com/jardelkuhnen/video-api/service"
+	"github.com/jardelkuhnen/video-api/utils"
 )
 
 var (
 	videoRepository repository.VideoRepository = repository.NewVideoRepository()
 	videoService    service.VideoService       = service.New(videoRepository)
 	videoController controller.VideoController = controller.New(videoService)
+	video           entity.Video
+	err             error
 )
 
 func addVideosRoutes(routerGroup *gin.RouterGroup) {
 	videos := routerGroup.Group("/videos")
 
 	videos.GET("/", func(ctx *gin.Context) {
-		ctx.JSON(200, videoController.FindAll())
+		ctx.JSON(http.StatusOK, videoController.FindAll())
 	})
 
 	videos.GET("/:id", func(ctx *gin.Context) {
 		id := ctx.Param("id")
-		if id == "" {
-			ctx.Header("Content-Type", "application/json")
-			ctx.JSON(http.StatusNotFound, gin.H{"Error: ": "Invalid startingIndex on search filter!"})
-			ctx.Abort()
-			return
-		}
+
+		utils.BadRequestIfConditionTruly(id == "", "Invalida Id. It must be informed!", ctx)
 
 		idInt, err := strconv.ParseUint(id, 10, 64)
-		if err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		}
+		utils.BadRequestIfError(err, ctx)
 
 		var video entity.Video
 		video, err = videoController.FindById(idInt)
@@ -50,43 +47,35 @@ func addVideosRoutes(routerGroup *gin.RouterGroup) {
 	})
 
 	videos.POST("/", func(ctx *gin.Context) {
-		err := videoController.Save(ctx)
-		if err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		} else {
-			ctx.JSON(http.StatusOK, gin.H{"message": "Video inserted with success!"})
-		}
+		var video entity.Video
+		var err error
+		video, err = videoController.Save(ctx)
 
+		utils.BadRequestIfError(err, ctx)
+
+		ctx.JSON(http.StatusOK, video)
 	})
 
 	videos.PUT("/", func(ctx *gin.Context) {
-		err := videoController.Update(ctx)
-		if err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		} else {
-			ctx.JSON(http.StatusOK, gin.H{"message": "Video updated with success!"})
-		}
+		video, err = videoController.Update(ctx)
 
+		utils.BadRequestIfError(err, ctx)
+
+		ctx.JSON(http.StatusOK, video)
 	})
 
 	videos.DELETE("/", func(ctx *gin.Context) {
 		id := ctx.Query("id")
-		if id == "" {
-			ctx.Header("Content-Type", "application/json")
-			ctx.JSON(http.StatusNotFound, gin.H{"Error: ": "Invalid startingIndex on search filter!"})
-			ctx.Abort()
-			return
-		}
+
+		utils.BadRequestIfConditionTruly(id == "", "Invalid startingIndex on search filter!", ctx)
 
 		idInt, err := strconv.ParseUint(id, 10, 64)
-		if err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		}
+		utils.BadRequestIfError(err, ctx)
 
 		message, err := videoController.Delete(idInt)
-		if err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		}
-		ctx.JSON(200, message)
+
+		utils.BadRequestIfError(err, ctx)
+
+		ctx.JSON(http.StatusOK, message)
 	})
 }

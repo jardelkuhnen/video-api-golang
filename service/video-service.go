@@ -6,7 +6,7 @@ import (
 )
 
 type VideoService interface {
-	Save(entity.Video) entity.Video
+	Save(entity.Video) (entity.Video, error)
 	Update(video entity.Video) entity.Video
 	FindAll() []entity.Video
 	FindById(id uint64) (entity.Video, error)
@@ -29,9 +29,12 @@ func (db *videoService) FindById(id uint64) (entity.Video, error) {
 	return db.videoRepository.FindById(id)
 }
 
-func (service *videoService) Save(video entity.Video) entity.Video {
-	service.videoRepository.Save(video)
-	return video
+func (service *videoService) Save(video entity.Video) (entity.Video, error) {
+	video, err := service.videoRepository.Save(video)
+	if err != nil {
+		return entity.Video{}, err
+	}
+	return video, nil
 }
 
 func (service *videoService) FindAll() []entity.Video {

@@ -10,8 +10,8 @@ import (
 
 type VideoController interface {
 	FindAll() []entity.Video
-	Save(ctx *gin.Context) error
-	Update(ctx *gin.Context) error
+	Save(ctx *gin.Context) (entity.Video, error)
+	Update(ctx *gin.Context) (entity.Video, error)
 	FindById(id uint64) (entity.Video, error)
 	Delete(id uint64) (string, error)
 }
@@ -22,6 +22,7 @@ type controller struct {
 
 var validate *validator.Validate
 
+// constructor
 func New(service service.VideoService) VideoController {
 	validate = validator.New()
 	validate.RegisterValidation("is-bad-language", validators.ValidateBadLanguage)
@@ -34,38 +35,41 @@ func (c *controller) FindById(id uint64) (entity.Video, error) {
 	return c.service.FindById(id)
 }
 
-func (c *controller) Update(ctx *gin.Context) error {
+func (c *controller) Update(ctx *gin.Context) (entity.Video, error) {
 	var video entity.Video
 	err := ctx.ShouldBindJSON(&video)
 	if err != nil {
-		return err
+		return entity.Video{}, err
 	}
 	err = validate.Struct(video)
 	if err != nil {
-		return err
+		return entity.Video{}, err
 	}
 
 	c.service.Update(video)
-	return nil
+	return video, nil
 }
 
 func (c *controller) FindAll() []entity.Video {
 	return c.service.FindAll()
 }
 
-func (c *controller) Save(ctx *gin.Context) error {
+func (c *controller) Save(ctx *gin.Context) (entity.Video, error) {
 	var video entity.Video
 	err := ctx.ShouldBindJSON(&video)
 	if err != nil {
-		return err
+		return entity.Video{}, err
 	}
 	err = validate.Struct(video)
 	if err != nil {
-		return err
+		return entity.Video{}, err
 	}
 
-	c.service.Save(video)
-	return nil
+	video, err = c.service.Save(video)
+	if err != nil {
+		return entity.Video{}, err
+	}
+	return video, err
 }
 
 func (c *controller) Delete(id uint64) (string, error) {

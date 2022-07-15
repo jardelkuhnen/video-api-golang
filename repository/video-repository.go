@@ -9,7 +9,7 @@ import (
 )
 
 type VideoRepository interface {
-	Save(video entity.Video)
+	Save(video entity.Video) (entity.Video, error)
 	Update(video entity.Video)
 	Delete(video entity.Video)
 	FindAll() []entity.Video
@@ -21,8 +21,9 @@ type database struct {
 	connection *gorm.DB
 }
 
+// constructor
 func NewVideoRepository() VideoRepository {
-	db, err := gorm.Open(sqlite.Open("test.db"))
+	db, err := gorm.Open(sqlite.Open("video-api.db"))
 	if err != nil {
 		panic("Error to connect database")
 	}
@@ -36,7 +37,7 @@ func NewVideoRepository() VideoRepository {
 // FindById implements VideoRepository
 func (db *database) FindById(id uint64) (entity.Video, error) {
 	var video = entity.Video{ID: id}
-	result := db.connection.First(&video, id)
+	result := db.connection.Preload("Author").First(&video, id)
 	if result.Error != nil {
 		return entity.Video{}, result.Error
 	}
@@ -66,16 +67,18 @@ func (db *database) Delete(video entity.Video) {
 func (db *database) FindAll() []entity.Video {
 	var videos []entity.Video
 	db.connection.Preload("Author").Find(&videos)
-	// db.connection.Set("gorm:auto_preload", true).Find(&videos)
 
 	return videos
 }
 
 // Save implements VideoRepository
-func (db *database) Save(video entity.Video) {
-	fmt.Println(video)
-	fmt.Println(video.Author)
-	db.connection.Create(&video)
+func (db *database) Save(video entity.Video) (entity.Video, error) {
+	result := db.connection.Create(&video)
+	if result.Error != nil {
+		return entity.Video{}, result.Error
+	}
+	fmt.Println(result)
+	return video, nil
 }
 
 // Update implements VideoRepository
