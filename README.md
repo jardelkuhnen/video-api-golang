@@ -10,12 +10,13 @@ Is a simple api about videos on youtube and your authors.
 
 Features:
 
- - Authentication Basic,
+ - Authentication Basic
  - Custom Logger Formatter
- - Save logs into file
- - External definition of routes
+ - Saving logs into file
+ - External definition of routes by module
  - Gindump for debug mode 
  - Crud with sqlite3 and Gorm
+ - Validation for entity
 
 ## Install
 
@@ -34,9 +35,6 @@ go run main.go
 ```sh
 todo ...
 ```
-
-# Segue link de consulta
-https://www.youtube.com/watch?v=qR0WnWL2o1Q&list=PL3eAkoh7fypr8zrkiygiY1e9osoqjoV9w&ab_channel=PragmaticReviews
 
 
 ## Show your support
